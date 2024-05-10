@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
+	"time"
 )
 
 func main() {
@@ -42,6 +44,27 @@ func main() {
 	}
 	scanner.Scan()
 	fmt.Println(N)
+
+	// reading open and close time
+	var openTime, closeTime time.Time
+	var parts string
+	parts = scanner.Text()
+	var part []string
+	part = strings.Split(parts, " ")
+	layout := "15:04"
+	openTime, err = time.Parse(layout, part[0])
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return
+	}
+
+	closeTime, err = time.Parse(layout, part[1])
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return
+	}
+
+	fmt.Printf("t1=%v; t2=%v\n", openTime, closeTime)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
