@@ -33,23 +33,6 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
-	if !scanner.Scan() {
-		log.Fatal(scanner.Err())
-	}
-
-	// reading number of tables and check for valid input
-	N := parsers.ParseNumber(scanner)
-	fmt.Println(N)
-
-	// reading open and close time
-
-	openTime, closeTime := parsers.ParseTime(scanner)
-	fmt.Printf("t1=%v; t2=%v\n", openTime, closeTime)
-
-	// reading cost of an hour
-
-	cost := parsers.ParseNumber(scanner)
-	fmt.Println(cost)
 
 	fileOutput, err := os.OpenFile("output.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
@@ -63,6 +46,26 @@ func main() {
 		}
 	}(fileOutput)
 
+	// reading number of tables and check for valid input
+	N := parsers.ParseNumber(scanner)
+	fmt.Println(N)
+	// reading open and close time
+
+	openTime, closeTime := parsers.ParseTime(scanner)
+	fmt.Printf("t1=%v; t2=%v\n", openTime, closeTime)
+
+	line := fmt.Sprintf("%s\n", openTime.Format("15:04"))
+	_, err = fileOutput.WriteString(line)
+	if err != nil {
+		fmt.Println("Failed to write to file:", err)
+		os.Exit(1)
+	}
+
+	// reading cost of an hour
+
+	cost := parsers.ParseNumber(scanner)
+	fmt.Println(cost)
+
 	club := model.Club{
 		Tables:         make(map[int]model.Table, N),
 		Client:         make(map[string]model.Client),
@@ -75,11 +78,13 @@ func main() {
 	events := make([]model.Event, 0)
 
 	for scanner.Scan() {
+
 		event := parsers.ParseEvent(scanner)
 		if len(events) > 0 && event.TimeOfEvent.Before(events[len(events)-1].TimeOfEvent) {
 			fmt.Println("Error in sequences of events")
 			os.Exit(1)
 		}
+		fmt.Println(event.TimeOfEvent)
 		switch event.EventID {
 		case 1:
 			processors.FirstEvent(event, &club, fileOutput)
@@ -92,6 +97,10 @@ func main() {
 		}
 		events = append(events, *event)
 
+	}
+
+	for _, client := range club.Client {
+		processors.FourthEvent(&model.Event{ClientID: client.ClientID, TimeOfEvent: *closeTime}, &club, fileOutput)
 	}
 
 	if err := scanner.Err(); err != nil {

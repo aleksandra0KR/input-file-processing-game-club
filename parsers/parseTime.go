@@ -3,12 +3,16 @@ package parsers
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
 )
 
 func ParseTime(scanner *bufio.Scanner) (*time.Time, *time.Time) {
+	if !scanner.Scan() {
+		log.Fatal(scanner.Err())
+	}
 	parts := strings.Split(scanner.Text(), " ")
 
 	layout := "15:04"
@@ -23,8 +27,6 @@ func ParseTime(scanner *bufio.Scanner) (*time.Time, *time.Time) {
 		fmt.Println("Error parsing time:", err)
 		os.Exit(1)
 	}
-
-	scanner.Scan()
 
 	return &openTime, &closeTime
 }

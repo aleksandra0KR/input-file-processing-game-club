@@ -45,7 +45,7 @@ func ParseEvent(scanner *bufio.Scanner) *model.Event {
 		event.TableID = tableID
 	}
 
-	scanner.Scan()
+	//scanner.Scan()
 
 	return &event
 }
