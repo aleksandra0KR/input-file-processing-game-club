@@ -15,6 +15,7 @@ func EleventhEvent(event *model.Event, club *model.Club, file *os.File) {
 	}
 
 	client, _ := club.Client[event.ClientID]
-
+	client.DepartureTime = event.TimeOfEvent
+	club.HistoryList = append(club.HistoryList, client)
 	delete(club.Client, client.ClientID)
 }

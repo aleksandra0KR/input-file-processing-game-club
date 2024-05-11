@@ -29,6 +29,8 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 
 			nextClient.Table = client.Table
 			nextClient.Table.Client = &nextClient
+			client.DepartureTime = event.TimeOfEvent
+			club.HistoryList = append(club.HistoryList, client)
 			delete(club.Client, client.ClientID)
 			line = fmt.Sprintf("%s %d %s %d\n", event.TimeOfEvent.Format("15:04"), 12, nextClient.ClientID, nextClient.Table.TableID)
 			_, err = file.WriteString(line)
@@ -38,6 +40,8 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 			}
 
 		} else {
+			client.DepartureTime = event.TimeOfEvent
+			club.HistoryList = append(club.HistoryList, client)
 			delete(club.Client, client.ClientID)
 		}
 

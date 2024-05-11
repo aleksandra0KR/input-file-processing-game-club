@@ -100,7 +100,14 @@ func main() {
 	}
 
 	for _, client := range club.Client {
-		processors.FourthEvent(&model.Event{ClientID: client.ClientID, TimeOfEvent: *closeTime}, &club, fileOutput)
+		processors.EleventhEvent(&model.Event{ClientID: client.ClientID, TimeOfEvent: *closeTime}, &club, fileOutput)
+	}
+
+	line = fmt.Sprintf("%s\n", closeTime.Format("15:04"))
+	_, err = fileOutput.WriteString(line)
+	if err != nil {
+		fmt.Println("Failed to write to file:", err)
+		os.Exit(1)
 	}
 
 	if err := scanner.Err(); err != nil {
