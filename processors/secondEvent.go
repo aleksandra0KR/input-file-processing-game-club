@@ -7,13 +7,13 @@ import (
 )
 
 func SecondEvent(event *model.Event, club *model.Club, file *os.File) {
-	line := fmt.Sprintf("%s %d %s %d\n", event.TimeOfEvent, event.EventID, event.ClientName, event.TableID)
+	line := fmt.Sprintf("%s %d %d %d\n", event.TimeOfEvent, event.EventID, event.ClientID, event.TableID)
 	_, err := file.WriteString(line)
 	if err != nil {
 		fmt.Println("Failed to write to file:", err)
 		os.Exit(1)
 	}
-	_, ok := club.UsersID[event.ClientName]
+	_, ok := club.Client[event.ClientID]
 	if !ok {
 		line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent, 13, "ClientUnknown")
 		_, err := file.WriteString(line)
@@ -23,7 +23,7 @@ func SecondEvent(event *model.Event, club *model.Club, file *os.File) {
 		}
 	}
 
-	if club.TablesID[event.TableID] == false {
+	if club.Tables[event.TableID].Client == nil {
 		line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent, 13, "PlaceIsBusy")
 		_, err := file.WriteString(line)
 		if err != nil {
