@@ -7,7 +7,7 @@ import (
 )
 
 func ThirdEvent(event *model.Event, club *model.Club, file *os.File) {
-	line := fmt.Sprintf("%s %d %d %d\n", event.TimeOfEvent, event.EventID, event.ClientID, event.TableID)
+	line := fmt.Sprintf("%s %d %s %d\n", event.TimeOfEvent, event.EventID, event.ClientID, event.TableID)
 	_, err := file.WriteString(line)
 	if err != nil {
 		fmt.Println("Failed to write to file:", err)
@@ -22,7 +22,7 @@ func ThirdEvent(event *model.Event, club *model.Club, file *os.File) {
 	}
 
 	if len(availableTables) > 0 {
-		line := fmt.Sprintf("%s %d %d %s\n", event.TimeOfEvent, 13, event.ClientID, "ICanWaitNoLonger")
+		line := fmt.Sprintf("%s %d %s %s\n", event.TimeOfEvent, 13, event.ClientID, "ICanWaitNoLonger")
 		_, err := file.WriteString(line)
 		if err != nil {
 			fmt.Println("Failed to write to file:", err)
@@ -31,7 +31,7 @@ func ThirdEvent(event *model.Event, club *model.Club, file *os.File) {
 	}
 
 	if len(club.WaitingList) >= club.AmountOfTables {
-		line := fmt.Sprintf("%s %d %d\n", event.TimeOfEvent, 11, event.ClientID)
+		line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent, 11, event.ClientID)
 		_, err := file.WriteString(line)
 		if err != nil {
 			fmt.Println("Failed to write to file:", err)

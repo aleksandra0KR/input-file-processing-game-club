@@ -8,7 +8,7 @@ import (
 
 func FirstEvent(event *model.Event, club *model.Club, file *os.File) {
 
-	line := fmt.Sprintf("%s %d %d\n", event.TimeOfEvent, event.EventID, event.ClientID)
+	line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent, event.EventID, event.ClientID)
 	_, err := file.WriteString(line)
 	if err != nil {
 		fmt.Println("Failed to write to file:", err)

@@ -3,11 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"inputfileprocess/model"
+	"inputfileprocess/parsers"
+	"inputfileprocess/processors"
 	"log"
 	"os"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func main() {
@@ -31,40 +31,68 @@ func main() {
 		}
 	}(file)
 
-	// reading number of tables and check for valid input
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	if !scanner.Scan() {
 		log.Fatal(scanner.Err())
 	}
-	N, err := strconv.Atoi(scanner.Text())
-	if err != nil || N <= 0 {
-		fmt.Println("invalid number of tables:", scanner.Text())
-		return
-	}
-	scanner.Scan()
+
+	// reading number of tables and check for valid input
+	N := parsers.ParseNumber(scanner)
 	fmt.Println(N)
 
 	// reading open and close time
-	var openTime, closeTime time.Time
-	var parts string
-	parts = scanner.Text()
-	var part []string
-	part = strings.Split(parts, " ")
-	layout := "15:04"
-	openTime, err = time.Parse(layout, part[0])
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return
-	}
 
-	closeTime, err = time.Parse(layout, part[1])
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return
-	}
-
+	openTime, closeTime := parsers.ParseTime(scanner)
 	fmt.Printf("t1=%v; t2=%v\n", openTime, closeTime)
+
+	// reading cost of an hour
+
+	cost := parsers.ParseNumber(scanner)
+	fmt.Println(cost)
+
+	fileOutput, err := os.OpenFile("output.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		fmt.Println("Failed to create file:", err)
+		return
+	}
+	defer func(fileOutput *os.File) {
+		err := fileOutput.Close()
+		if err != nil {
+
+		}
+	}(fileOutput)
+
+	club := model.Club{
+		Tables:         make(map[int]model.Table, N),
+		Client:         make(map[string]model.Client),
+		AmountOfTables: N,
+		OpenTime:       *openTime,
+		CloseTime:      *closeTime,
+		PricePerHour:   cost,
+		WaitingList:    make([]model.Client, 0)}
+
+	events := make([]model.Event, 0)
+
+	for scanner.Scan() {
+		event := parsers.ParseEvent(scanner)
+		if len(events) > 0 && event.TimeOfEvent.Before(events[len(events)-1].TimeOfEvent) {
+			fmt.Println("Error in sequences of events")
+			os.Exit(1)
+		}
+		switch event.EventID {
+		case 1:
+			processors.FirstEvent(event, &club, fileOutput)
+		case 2:
+			processors.SecondEvent(event, &club, fileOutput)
+		case 3:
+			processors.ThirdEvent(event, &club, fileOutput)
+		case 4:
+			processors.FourthEvent(event, &club, fileOutput)
+		}
+		events = append(events, *event)
+
+	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)

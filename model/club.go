@@ -4,7 +4,7 @@ import "time"
 
 type Club struct {
 	Tables         map[int]Table
-	Client         map[int]Client
+	Client         map[string]Client
 	AmountOfTables int
 	OpenTime       time.Time
 	CloseTime      time.Time
