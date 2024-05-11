@@ -2,9 +2,9 @@ package model
 
 import "time"
 
-type event struct {
-	timeOfEvent time.Time
-	eventID     int8
-	clientName  string
-	tableID     int64
+type Event struct {
+	TimeOfEvent time.Time
+	EventID     int
+	ClientName  string
+	TableID     int
 }
