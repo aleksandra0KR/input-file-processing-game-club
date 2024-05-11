@@ -3,10 +3,11 @@ package model
 import "time"
 
 type Club struct {
-	TablesID       map[int]bool
-	UsersID        map[string]int
+	Tables         map[int]Table
+	Client         map[int]Client
 	AmountOfTables int
 	OpenTime       time.Time
 	CloseTime      time.Time
 	PricePerHour   int
+	WaitingList    []Client
 }

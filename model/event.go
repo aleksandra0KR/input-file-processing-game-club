@@ -5,6 +5,6 @@ import "time"
 type Event struct {
 	TimeOfEvent time.Time
 	EventID     int
-	ClientName  string
+	ClientID    int
 	TableID     int
 }
