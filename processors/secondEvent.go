@@ -31,12 +31,24 @@ func SecondEvent(event *model.Event, club *model.Club, file *os.File) {
 			os.Exit(1)
 		}
 	}
-	table := model.Table{
-		TableID: event.TableID,
-		Client:  &client,
+
+	table, ok := club.Tables[event.TableID]
+	if !ok {
+		club.Tables[event.TableID] = model.Table{
+			TableID:             event.TableID,
+			Client:              &client,
+			StartOfExploitation: event.TimeOfEvent,
+		}
+		table = club.Tables[event.TableID]
+	} else {
+		table.Exploitation += table.EndOfExploitation.Sub(table.StartOfExploitation)
+		table.StartOfExploitation = event.TimeOfEvent
 	}
+
+	//club.Tables[event.TableID] = client.Table
 	client.Table = &table
-	club.Tables[event.TableID] = table
+	table.Client = &client
 	club.Client[client.ClientID] = client
+	club.Tables[table.TableID] = table
 
 }

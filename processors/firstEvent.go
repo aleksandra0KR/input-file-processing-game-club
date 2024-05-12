@@ -14,8 +14,7 @@ func FirstEvent(event *model.Event, club *model.Club, file *os.File) {
 		fmt.Println("Failed to write to file:", err)
 		os.Exit(1)
 	}
-	fmt.Println(event.TimeOfEvent)
-	fmt.Println(club.OpenTime)
+
 	if event.TimeOfEvent.Before(club.OpenTime) || event.TimeOfEvent.After(club.CloseTime) {
 		line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent.Format("15:04"), 13, "NotOpenYet")
 		_, err := file.WriteString(line)

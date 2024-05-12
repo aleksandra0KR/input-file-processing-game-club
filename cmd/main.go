@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"inputfileprocess/helpers"
 	"inputfileprocess/model"
 	"inputfileprocess/parsers"
 	"inputfileprocess/processors"
@@ -11,13 +12,13 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
+	/*if len(os.Args) < 2 {
 		fmt.Println("You should provide name of a input file")
 		os.Exit(1)
 	}
-
-	filename := os.Args[1]
-	file, err := os.Open(filename)
+	*/
+	//filename := os.Args[1]
+	file, err := os.Open("../inputFiled/file1.txt")
 	if err != nil {
 		_ = fmt.Errorf("error occured while opening the file %f", err)
 		os.Exit(1)
@@ -84,7 +85,6 @@ func main() {
 			fmt.Println("Error in sequences of events")
 			os.Exit(1)
 		}
-		fmt.Println(event.TimeOfEvent)
 		switch event.EventID {
 		case 1:
 			processors.FirstEvent(event, &club, fileOutput)
@@ -108,6 +108,18 @@ func main() {
 	if err != nil {
 		fmt.Println("Failed to write to file:", err)
 		os.Exit(1)
+	}
+	fmt.Println("ekfncekrnvnekrnvewnlkwv")
+	for _, table := range club.Tables {
+
+		fmt.Println(table.TableID)
+		totalCoast := helpers.GetHours(table.Exploitation) * club.PricePerHour
+		line = fmt.Sprintf("%d %d %s\n", table.TableID, totalCoast, table.Exploitation)
+		_, err = fileOutput.WriteString(line)
+		if err != nil {
+			fmt.Println("Failed to write to file:", err)
+			os.Exit(1)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {

@@ -2,6 +2,7 @@ package processors
 
 import (
 	"fmt"
+	"inputfileprocess/helpers"
 	"inputfileprocess/model"
 	"os"
 )
@@ -27,9 +28,23 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 			nextClient := club.WaitingList[0]
 			club.WaitingList = club.WaitingList[1:]
 
-			nextClient.Table = client.Table
+			club.Client[nextClient.ClientID] = model.Client{
+				ClientID:    nextClient.ClientID,
+				ArrivalTime: nextClient.ArrivalTime,
+				Table:       client.Table,
+			}
+
+			nextClient = club.Client[nextClient.ClientID]
+
 			nextClient.Table.Client = &nextClient
+
 			client.DepartureTime = event.TimeOfEvent
+
+			client.Table.EndOfExploitation = event.TimeOfEvent
+			client.Table.Exploitation += client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation)
+			nextClient.Table.StartOfExploitation = event.TimeOfEvent
+			club.Tables[client.Table.TableID] = *client.Table
+			fmt.Println(club.Tables[client.Table.TableID].StartOfExploitation, "exploitation", client.ClientID)
 			club.HistoryList = append(club.HistoryList, client)
 			delete(club.Client, client.ClientID)
 			line = fmt.Sprintf("%s %d %s %d\n", event.TimeOfEvent.Format("15:04"), 12, nextClient.ClientID, nextClient.Table.TableID)
@@ -40,8 +55,13 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 			}
 
 		} else {
+			fmt.Println(client.Table.Exploitation.Seconds(), "exploitation", client.ClientID)
+			client.Table.EndOfExploitation = event.TimeOfEvent
+			client.Table.Exploitation += client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation)
 			client.DepartureTime = event.TimeOfEvent
+			fmt.Println(helpers.GetHours(client.Table.Exploitation), client.ClientID)
 			club.HistoryList = append(club.HistoryList, client)
+			club.Tables[client.Table.TableID] = *client.Table
 			delete(club.Client, client.ClientID)
 		}
 
