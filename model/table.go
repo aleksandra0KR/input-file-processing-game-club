@@ -8,4 +8,5 @@ type Table struct {
 	StartOfExploitation time.Time
 	EndOfExploitation   time.Time
 	Exploitation        time.Duration
+	Payment             int
 }

@@ -42,6 +42,8 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 
 			client.Table.EndOfExploitation = event.TimeOfEvent
 			client.Table.Exploitation += client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation)
+			client.Table.Payment += helpers.GetHours(client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation))
+
 			nextClient.Table.StartOfExploitation = event.TimeOfEvent
 			club.Tables[client.Table.TableID] = *client.Table
 			fmt.Println(club.Tables[client.Table.TableID].StartOfExploitation, "exploitation", client.ClientID)
@@ -58,6 +60,7 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 			fmt.Println(client.Table.Exploitation.Seconds(), "exploitation", client.ClientID)
 			client.Table.EndOfExploitation = event.TimeOfEvent
 			client.Table.Exploitation += client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation)
+			client.Table.Payment += helpers.GetHours(client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation))
 			client.DepartureTime = event.TimeOfEvent
 			fmt.Println(helpers.GetHours(client.Table.Exploitation), client.ClientID)
 			club.HistoryList = append(club.HistoryList, client)

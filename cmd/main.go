@@ -9,6 +9,7 @@ import (
 	"inputfileprocess/processors"
 	"log"
 	"os"
+	"sort"
 )
 
 func main() {
@@ -110,11 +111,20 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Println("ekfncekrnvnekrnvewnlkwv")
-	for _, table := range club.Tables {
+	tables := make([]model.Table, 0, len(club.Tables))
+	for _, v := range club.Tables {
+		tables = append(tables, v)
+	}
+
+	// Sort the slice by TableID
+	sort.Slice(tables, func(i, j int) bool {
+		return tables[i].TableID < tables[j].TableID
+	})
+	for _, table := range tables {
 
 		fmt.Println(table.TableID)
-		totalCoast := helpers.GetHours(table.Exploitation) * club.PricePerHour
-		line = fmt.Sprintf("%d %d %s\n", table.TableID, totalCoast, table.Exploitation)
+		totalCoast := table.Payment * club.PricePerHour
+		line = fmt.Sprintf("%d %d %s\n", table.TableID, totalCoast, helpers.DurationFormat(table.Exploitation))
 		_, err = fileOutput.WriteString(line)
 		if err != nil {
 			fmt.Println("Failed to write to file:", err)
