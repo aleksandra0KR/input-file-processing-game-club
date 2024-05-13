@@ -14,6 +14,7 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 		fmt.Println("Failed to write to file:", err)
 		os.Exit(1)
 	}
+	club.HistoryList = append(club.HistoryList, event.TimeOfEvent)
 
 	client, ok := club.Client[event.ClientID]
 	if !ok {
@@ -23,6 +24,8 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 			fmt.Println("Failed to write to file:", err)
 			os.Exit(1)
 		}
+	} else if client.Table == nil {
+		delete(club.Client, client.ClientID)
 	} else {
 		if len(club.WaitingList) > 0 {
 			nextClient := club.WaitingList[0]
@@ -35,20 +38,15 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 			}
 
 			nextClient = club.Client[nextClient.ClientID]
-
 			nextClient.Table.Client = &nextClient
-
 			client.DepartureTime = event.TimeOfEvent
-
 			client.Table.EndOfExploitation = event.TimeOfEvent
 			client.Table.Exploitation += client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation)
 			client.Table.Payment += helpers.GetHours(client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation))
-
 			nextClient.Table.StartOfExploitation = event.TimeOfEvent
 			club.Tables[client.Table.TableID] = *client.Table
-			fmt.Println(club.Tables[client.Table.TableID].StartOfExploitation, "exploitation", client.ClientID)
-			club.HistoryList = append(club.HistoryList, client)
 			delete(club.Client, client.ClientID)
+
 			line = fmt.Sprintf("%s %d %s %d\n", event.TimeOfEvent.Format("15:04"), 12, nextClient.ClientID, nextClient.Table.TableID)
 			_, err = file.WriteString(line)
 			if err != nil {
@@ -57,14 +55,13 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 			}
 
 		} else {
-			fmt.Println(client.Table.Exploitation.Seconds(), "exploitation", client.ClientID)
-			client.Table.EndOfExploitation = event.TimeOfEvent
-			client.Table.Exploitation += client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation)
-			client.Table.Payment += helpers.GetHours(client.Table.StartOfExploitation.Sub(client.Table.EndOfExploitation))
+			table := client.Table
+			table.EndOfExploitation = event.TimeOfEvent
+			table.Exploitation += table.StartOfExploitation.Sub(table.EndOfExploitation)
+			table.Payment += helpers.GetHours(table.StartOfExploitation.Sub(table.EndOfExploitation))
 			client.DepartureTime = event.TimeOfEvent
-			fmt.Println(helpers.GetHours(client.Table.Exploitation), client.ClientID)
-			club.HistoryList = append(club.HistoryList, client)
-			club.Tables[client.Table.TableID] = *client.Table
+			table.Client = nil
+			club.Tables[client.Table.TableID] = *table
 			delete(club.Client, client.ClientID)
 		}
 

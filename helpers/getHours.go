@@ -5,9 +5,9 @@ import (
 )
 
 func GetHours(d time.Duration) int {
-	mins := -int(d.Minutes())
-	hrs := mins / 60
-	if mins%60 > 0 {
+	mints := -int(d.Minutes())
+	hrs := mints / 60
+	if mints%60 > 0 {
 		hrs++
 	}
 	return hrs

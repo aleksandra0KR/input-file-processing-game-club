@@ -13,13 +13,8 @@ func ThirdEvent(event *model.Event, club *model.Club, file *os.File) {
 		fmt.Println("Failed to write to file:", err)
 		os.Exit(1)
 	}
+	club.HistoryList = append(club.HistoryList, event.TimeOfEvent)
 
-	var availableTables []int
-	for i, table := range club.Tables {
-		if table.Client == nil {
-			availableTables = append(availableTables, i)
-		}
-	}
 	if club.AmountOfTables-len(club.Tables) > 0 {
 		line := fmt.Sprintf("%s %d %s %s\n", event.TimeOfEvent.Format("15:04"), 13, event.ClientID, "ICanWaitNoLonger")
 		_, err := file.WriteString(line)

@@ -10,7 +10,7 @@ func DurationFormat(d time.Duration) string {
 	secs := int(d.Seconds())
 	hours := secs / 3600
 	secs %= 3600
-	mins := secs / 60
+	mints := secs / 60
 	secs %= 60
-	return fmt.Sprintf("%02d:%02d", hours, mins)
+	return fmt.Sprintf("%02d:%02d", hours, mints)
 }

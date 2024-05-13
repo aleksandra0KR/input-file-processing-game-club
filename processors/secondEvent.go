@@ -13,6 +13,8 @@ func SecondEvent(event *model.Event, club *model.Club, file *os.File) {
 		fmt.Println("Failed to write to file:", err)
 		os.Exit(1)
 	}
+	club.HistoryList = append(club.HistoryList, event.TimeOfEvent)
+
 	client, ok := club.Client[event.ClientID]
 	if !ok {
 		line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent.Format("15:04"), 13, "ClientUnknown")
@@ -21,17 +23,8 @@ func SecondEvent(event *model.Event, club *model.Club, file *os.File) {
 			fmt.Println("Failed to write to file:", err)
 			os.Exit(1)
 		}
+		return
 	}
-
-	if club.Tables[event.TableID].Client != nil {
-		line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent.Format("15:04"), 13, "PlaceIsBusy")
-		_, err := file.WriteString(line)
-		if err != nil {
-			fmt.Println("Failed to write to file:", err)
-			os.Exit(1)
-		}
-	}
-
 	table, ok := club.Tables[event.TableID]
 	if !ok {
 		club.Tables[event.TableID] = model.Table{
@@ -41,11 +34,21 @@ func SecondEvent(event *model.Event, club *model.Club, file *os.File) {
 		}
 		table = club.Tables[event.TableID]
 	} else {
-		table.Exploitation += table.EndOfExploitation.Sub(table.StartOfExploitation)
-		table.StartOfExploitation = event.TimeOfEvent
+		if table.Client != nil {
+
+			line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent.Format("15:04"), 13, "PlaceIsBusy")
+			_, err := file.WriteString(line)
+			if err != nil {
+				fmt.Println("Failed to write to file:", err)
+				os.Exit(1)
+			}
+		} else {
+			table.Exploitation += table.EndOfExploitation.Sub(table.StartOfExploitation)
+			table.StartOfExploitation = event.TimeOfEvent
+		}
+
 	}
 
-	//club.Tables[event.TableID] = client.Table
 	client.Table = &table
 	table.Client = &client
 	club.Client[client.ClientID] = client

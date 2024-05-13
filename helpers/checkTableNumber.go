@@ -1,5 +1,5 @@
 package helpers
 
-func checkTableNumber(N, tableNumber int) bool {
+func CheckTableNumber(tableNumber, N int) bool {
 	return tableNumber <= N
 }

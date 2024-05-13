@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-func checkUserName(username string) bool {
+func CheckUserName(username string) bool {
 	pattern := `^[a-zA-Z0-9_-]*$`
 	reg, err := regexp.Compile(pattern)
 	if err != nil {

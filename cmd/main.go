@@ -13,13 +13,13 @@ import (
 )
 
 func main() {
-	/*if len(os.Args) < 2 {
-		fmt.Println("You should provide name of a input file")
+	if len(os.Args) < 2 {
+		fmt.Println("you should provide name of a input file")
 		os.Exit(1)
 	}
-	*/
-	//filename := os.Args[1]
-	file, err := os.Open("../inputFiled/file1.txt")
+
+	filename := os.Args[1]
+	file, err := os.Open(filename)
 	if err != nil {
 		_ = fmt.Errorf("error occured while opening the file %f", err)
 		os.Exit(1)
@@ -38,7 +38,7 @@ func main() {
 
 	fileOutput, err := os.OpenFile("output.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		fmt.Println("Failed to create file:", err)
+		_ = fmt.Errorf("failed to create file %f: ", err)
 		return
 	}
 	defer func(fileOutput *os.File) {
@@ -49,13 +49,10 @@ func main() {
 	}(fileOutput)
 
 	// reading number of tables and check for valid input
-	N := parsers.ParseNumber(scanner)
-	fmt.Println(N)
+	N := parsers.ParseNumber(scanner, "number of tables")
+
 	// reading open and close time
-
 	openTime, closeTime := parsers.ParseTime(scanner)
-	fmt.Printf("t1=%v; t2=%v\n", openTime, closeTime)
-
 	line := fmt.Sprintf("%s\n", openTime.Format("15:04"))
 	_, err = fileOutput.WriteString(line)
 	if err != nil {
@@ -64,9 +61,7 @@ func main() {
 	}
 
 	// reading cost of an hour
-
-	cost := parsers.ParseNumber(scanner)
-	fmt.Println(cost)
+	cost := parsers.ParseNumber(scanner, "cost per hour")
 
 	club := model.Club{
 		Tables:         make(map[int]model.Table, N),
@@ -77,15 +72,10 @@ func main() {
 		PricePerHour:   cost,
 		WaitingList:    make([]model.Client, 0)}
 
-	events := make([]model.Event, 0)
-
+	// possessing events
 	for scanner.Scan() {
 
-		event := parsers.ParseEvent(scanner)
-		if len(events) > 0 && event.TimeOfEvent.Before(events[len(events)-1].TimeOfEvent) {
-			fmt.Println("Error in sequences of events")
-			os.Exit(1)
-		}
+		event := parsers.ParseEvent(scanner, club)
 		switch event.EventID {
 		case 1:
 			processors.FirstEvent(event, &club, fileOutput)
@@ -96,10 +86,10 @@ func main() {
 		case 4:
 			processors.FourthEvent(event, &club, fileOutput)
 		}
-		events = append(events, *event)
 
 	}
 
+	// removing all remaining clients
 	for _, client := range club.Client {
 		processors.EleventhEvent(&model.Event{ClientID: client.ClientID, TimeOfEvent: *closeTime}, &club, fileOutput)
 	}
@@ -110,19 +100,19 @@ func main() {
 		fmt.Println("Failed to write to file:", err)
 		os.Exit(1)
 	}
-	fmt.Println("ekfncekrnvnekrnvewnlkwv")
+
+	// sort the slice by TableID
 	tables := make([]model.Table, 0, len(club.Tables))
 	for _, v := range club.Tables {
 		tables = append(tables, v)
 	}
-
-	// Sort the slice by TableID
 	sort.Slice(tables, func(i, j int) bool {
 		return tables[i].TableID < tables[j].TableID
 	})
+
+	// print income
 	for _, table := range tables {
 
-		fmt.Println(table.TableID)
 		totalCoast := table.Payment * club.PricePerHour
 		line = fmt.Sprintf("%d %d %s\n", table.TableID, totalCoast, helpers.DurationFormat(table.Exploitation))
 		_, err = fileOutput.WriteString(line)

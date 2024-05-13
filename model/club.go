@@ -10,5 +10,5 @@ type Club struct {
 	CloseTime      time.Time
 	PricePerHour   int
 	WaitingList    []Client
-	HistoryList    []Client
+	HistoryList    []time.Time
 }
