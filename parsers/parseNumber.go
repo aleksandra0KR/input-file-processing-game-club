@@ -8,14 +8,14 @@ import (
 	"strconv"
 )
 
-func ParseNumber(scanner *bufio.Scanner) int {
+func ParseNumber(scanner *bufio.Scanner, value string) int {
 	if !scanner.Scan() {
 		log.Fatal(scanner.Err())
 	}
 
 	number, err := strconv.Atoi(scanner.Text())
 	if err != nil || number < 0 {
-		fmt.Println("invalid number of tables:", scanner.Text())
+		fmt.Println("invalid ", value, " ", scanner.Text())
 		os.Exit(1)
 	}
 	return number
