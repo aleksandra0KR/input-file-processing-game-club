@@ -3,8 +3,8 @@ package parsers
 import (
 	"bufio"
 	"fmt"
-	helpers2 "inputfileprocess/internal/helpers"
-	model2 "inputfileprocess/internal/models"
+	helpers2 "github.com/aleksandra0KR/input-file-processing-game-club/internal/helpers"
+	model2 "github.com/aleksandra0KR/input-file-processing-game-club/internal/models"
 	"os"
 	"strconv"
 	"strings"

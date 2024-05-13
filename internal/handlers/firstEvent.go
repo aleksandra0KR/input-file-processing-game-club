@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"fmt"
-	model2 "inputfileprocess/internal/models"
+	model2 "github.com/aleksandra0KR/input-file-processing-game-club/internal/models"
 	"os"
 )
 
