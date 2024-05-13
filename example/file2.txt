@@ -1,0 +1,15 @@
+2
+09:00 17:00
+10
+08:50 1 John
+09:00 2 John 1
+10:00 4 John
+11:00 1 Alice
+11:01 2 Alice 2
+12:00 4 Alice
+13:00 1 Bob
+13:01 2 Bob 1
+14:00 4 Bob
+15:00 1 Charlie
+15:01 3 Charlie
+16:00 4 Charlie

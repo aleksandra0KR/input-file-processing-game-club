@@ -1,13 +1,13 @@
-package processors
+package handlers
 
 import (
 	"fmt"
-	"inputfileprocess/helpers"
-	"inputfileprocess/model"
+	"inputfileprocess/internal/helpers"
+	model2 "inputfileprocess/internal/models"
 	"os"
 )
 
-func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
+func FourthEvent(event *model2.Event, club *model2.Club, file *os.File) {
 	line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent.Format("15:04"), event.EventID, event.ClientID)
 	_, err := file.WriteString(line)
 	if err != nil {
@@ -31,7 +31,7 @@ func FourthEvent(event *model.Event, club *model.Club, file *os.File) {
 			nextClient := club.WaitingList[0]
 			club.WaitingList = club.WaitingList[1:]
 
-			club.Client[nextClient.ClientID] = model.Client{
+			club.Client[nextClient.ClientID] = model2.Client{
 				ClientID:    nextClient.ClientID,
 				ArrivalTime: nextClient.ArrivalTime,
 				Table:       client.Table,

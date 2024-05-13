@@ -1,12 +1,12 @@
-package processors
+package handlers
 
 import (
 	"fmt"
-	"inputfileprocess/model"
+	model2 "inputfileprocess/internal/models"
 	"os"
 )
 
-func SecondEvent(event *model.Event, club *model.Club, file *os.File) {
+func SecondEvent(event *model2.Event, club *model2.Club, file *os.File) {
 	line := fmt.Sprintf("%s %d %s %d\n", event.TimeOfEvent.Format("15:04"), event.EventID, event.ClientID, event.TableID)
 	_, err := file.WriteString(line)
 	if err != nil {
@@ -27,7 +27,7 @@ func SecondEvent(event *model.Event, club *model.Club, file *os.File) {
 	}
 	table, ok := club.Tables[event.TableID]
 	if !ok {
-		club.Tables[event.TableID] = model.Table{
+		club.Tables[event.TableID] = model2.Table{
 			TableID:             event.TableID,
 			Client:              &client,
 			StartOfExploitation: event.TimeOfEvent,

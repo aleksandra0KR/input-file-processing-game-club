@@ -1,12 +1,12 @@
-package processors
+package handlers
 
 import (
 	"fmt"
-	"inputfileprocess/model"
+	model2 "inputfileprocess/internal/models"
 	"os"
 )
 
-func ThirdEvent(event *model.Event, club *model.Club, file *os.File) {
+func ThirdEvent(event *model2.Event, club *model2.Club, file *os.File) {
 	line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent.Format("15:04"), event.EventID, event.ClientID)
 	_, err := file.WriteString(line)
 	if err != nil {
@@ -30,7 +30,7 @@ func ThirdEvent(event *model.Event, club *model.Club, file *os.File) {
 			os.Exit(1)
 		}
 	} else {
-		club.WaitingList = append(club.WaitingList, model.Client{ClientID: event.ClientID, ArrivalTime: event.TimeOfEvent})
+		club.WaitingList = append(club.WaitingList, model2.Client{ClientID: event.ClientID, ArrivalTime: event.TimeOfEvent})
 	}
 
 }

@@ -3,17 +3,17 @@ package parsers
 import (
 	"bufio"
 	"fmt"
-	"inputfileprocess/helpers"
-	"inputfileprocess/model"
+	helpers2 "inputfileprocess/internal/helpers"
+	model2 "inputfileprocess/internal/models"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func ParseEvent(scanner *bufio.Scanner, club model.Club) *model.Event {
+func ParseEvent(scanner *bufio.Scanner, club model2.Club) *model2.Event {
 
-	var event model.Event
+	var event model2.Event
 
 	parts := strings.Split(scanner.Text(), " ")
 
@@ -28,7 +28,7 @@ func ParseEvent(scanner *bufio.Scanner, club model.Club) *model.Event {
 		fmt.Println("error parsing time: ", err, scanner.Text())
 		os.Exit(1)
 	}
-	if len(club.HistoryList) > 0 && !helpers.CheckSubsequenceOfTimeStamps(club.HistoryList[len(club.HistoryList)-1], timeOfEvent) {
+	if len(club.HistoryList) > 0 && !helpers2.CheckSubsequenceOfTimeStamps(club.HistoryList[len(club.HistoryList)-1], timeOfEvent) {
 		fmt.Println("Error subsequence of time stamps")
 		os.Exit(1)
 	}
@@ -41,14 +41,14 @@ func ParseEvent(scanner *bufio.Scanner, club model.Club) *model.Event {
 		fmt.Println("invalid ID of event:", scanner.Text())
 		os.Exit(1)
 	}
-	if !helpers.Contains(eventID) {
+	if !helpers2.Contains(eventID) {
 		fmt.Println("invalid ID of event:", scanner.Text())
 		os.Exit(1)
 	}
 
 	event.EventID = eventID
 
-	if !helpers.CheckUserName(parts[2]) {
+	if !helpers2.CheckUserName(parts[2]) {
 		fmt.Println("invalid user name", scanner.Text())
 		os.Exit(1)
 	}
@@ -64,7 +64,7 @@ func ParseEvent(scanner *bufio.Scanner, club model.Club) *model.Event {
 			fmt.Println("invalid ID of table:", scanner.Text())
 			os.Exit(1)
 		}
-		if !helpers.CheckTableNumber(tableID, club.AmountOfTables) {
+		if !helpers2.CheckTableNumber(tableID, club.AmountOfTables) {
 			fmt.Println("invalid table number", scanner.Text())
 			os.Exit(1)
 		}

@@ -1,12 +1,12 @@
-package processors
+package handlers
 
 import (
 	"fmt"
-	"inputfileprocess/model"
+	model2 "inputfileprocess/internal/models"
 	"os"
 )
 
-func FirstEvent(event *model.Event, club *model.Club, file *os.File) {
+func FirstEvent(event *model2.Event, club *model2.Club, file *os.File) {
 
 	line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent.Format("15:04"), event.EventID, event.ClientID)
 	_, err := file.WriteString(line)
@@ -33,7 +33,7 @@ func FirstEvent(event *model.Event, club *model.Club, file *os.File) {
 			}
 		}
 
-		club.Client[event.ClientID] = model.Client{
+		club.Client[event.ClientID] = model2.Client{
 			ClientID:    event.ClientID,
 			ArrivalTime: event.TimeOfEvent}
 	}

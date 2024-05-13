@@ -1,0 +1,19 @@
+3
+10:00 20:00
+15
+09:30 1 Alex
+09:45 1 Alex
+10:00 2 Alex 1
+11:00 4 Alex
+12:00 1 Ben
+12:01 2 Ben 2
+13:00 4 Ben
+14:00 1 Charlie
+14:01 2 Charlie 3
+15:00 4 Charlie
+16:00 1 David
+16:01 3 David
+17:00 4 David
+18:00 1 Eve
+18:01 2 Eve 1
+19:00 4 Eve

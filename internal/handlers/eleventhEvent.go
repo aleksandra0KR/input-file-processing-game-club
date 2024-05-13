@@ -1,13 +1,13 @@
-package processors
+package handlers
 
 import (
 	"fmt"
-	"inputfileprocess/helpers"
-	"inputfileprocess/model"
+	"inputfileprocess/internal/helpers"
+	model2 "inputfileprocess/internal/models"
 	"os"
 )
 
-func EleventhEvent(event *model.Event, club *model.Club, file *os.File) {
+func EleventhEvent(event *model2.Event, club *model2.Club, file *os.File) {
 
 	line := fmt.Sprintf("%s %d %s\n", event.TimeOfEvent.Format("15:04"), 11, event.ClientID)
 	_, err := file.WriteString(line)
